@@ -1,1 +1,0 @@
-# Smart-ManHole-Intrusion-Detection-System
