@@ -1,10 +1,7 @@
 
-const int waterSensorPin = A0; 
-const int reedSensorPin = 2;  
-const int motionSensorPin = 4; 
- int waterLevell
- int reedStatus;
- int motionDetected;
+const int waterSensorPin = 7; 
+const int reedSensorPin = 8;  
+const int motionSensorPin = 9; 
 void setupSensors() {
   pinMode(waterSensorPin, INPUT);
   pinMode(reedSensorPin, INPUT_PULLUP);
@@ -12,7 +9,9 @@ void setupSensors() {
 }
 
 void checkSensors() {
-  waterLevel = digitalRead(waterSensorPin);
+  int waterLevelAnalog = analogRead(waterSensorPin);
+  if(waterLevelAnalog >= 400) waterLevel = 1;
+  else waterLevel = 0;
   reedStatus = digitalRead(reedSensorPin); 
   motionDetected = digitalRead(motionSensorPin);
 
