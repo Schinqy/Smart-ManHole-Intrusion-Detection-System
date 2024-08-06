@@ -2,4 +2,34 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+        <!-- Primary colors -->
+        <color name="primaryColor">#6200EE</color>
+        <color name="primaryColorVariant">#3700B3</color>
+        <color name="secondaryColor">#03DAC6</color>
+
+        <!-- Background and Surface colors -->
+        <color name="backgroundColor">#FFFFFF</color>
+        <color name="surfaceColor">#FFFFFF</color>
+
+        <!-- Text colors -->
+        <color name="textColor">#000000</color>
+        <color name="textColorSecondary">#757575</color>
+        <color name="textColorInverse">#FFFFFF</color>
+
+        <!-- Card colors -->
+        <color name="cardBackgroundColor">#F5F5F5</color>
+        <color name="cardTextColor">#000000</color>
+
+        <!-- Other colors -->
+        <color name="errorColor">#B00020</color>
+        <color name="overlayColor">#80000000</color>
+
+
+        <color name="controlColor">#FF4081</color> <!-- For switch and button controls -->
+        <color name="accentColor">#FF9800</color>  <!-- Accent color for emphasis -->
+
+
+
+
 </resources>
