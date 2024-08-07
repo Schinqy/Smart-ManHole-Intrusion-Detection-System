@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">smids</string>
+    <string name="switch_alarm">Alarm</string>
+    <string name="switch_tear_gas">Tear Gas</string>
 </resources>

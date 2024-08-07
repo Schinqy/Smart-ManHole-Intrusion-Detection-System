@@ -58,7 +58,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginStart="16dp" />
 
-        <!-- Control Switches in a Card -->
+        <!-- Control Switches -->
+
         <androidx.cardview.widget.CardView
             android:id="@+id/controlCard"
             android:layout_width="0dp"
@@ -70,44 +71,89 @@
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
             app:cardBackgroundColor="@color/cardBackgroundColor">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
-
-                <Switch
-                    android:id="@+id/switchOverride"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Override Control"
-                    android:textColor="@color/primaryColor"
-                    android:thumbTint="@color/controlColor"
-                    android:trackTint="@color/controlColor"
-                    android:padding="8dp" />
-
-                <Switch
-                    android:id="@+id/switchAlarm"
-                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_horizontal">
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchOverride"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Override Control"
+                        android:textColor="@color/primaryColor"
+                        android:thumbTint="@color/controlColor"
+                        android:trackTint="@color/controlColor"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:scaleX="1.3"
+                        android:scaleY="1.3" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Alarm"
-                    android:textColor="@color/primaryColor"
-                    android:thumbTint="@color/controlColor"
-                    android:trackTint="@color/controlColor"
-                    android:padding="8dp"
-                    android:layout_marginTop="16dp" />
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="3dp"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_siren"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="Alarm icon" />
 
-                <Switch
-                    android:id="@+id/switchTearGas"
-                    android:layout_width="wrap_content"
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchAlarm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Alarm"
+                        android:textColor="@color/primaryColor"
+                        android:thumbTint="@color/controlColor"
+                        android:trackTint="@color/controlColor"
+                        android:textSize="18sp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:scaleX="1.1"
+                        android:scaleY="1.1" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tear Gas"
-                    android:textColor="@color/primaryColor"
-                    android:thumbTint="@color/controlColor"
-                    android:trackTint="@color/controlColor"
-                    android:padding="8dp"
-                    android:layout_marginTop="16dp" />
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="3dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginEnd="1dp"
+                        android:contentDescription="Tear gas icon"
+                        android:src="@drawable/ic_spray" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchTearGas"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tear Gas"
+                        android:textColor="@color/primaryColor"
+                        android:thumbTint="@color/controlColor"
+                        android:trackTint="@color/controlColor"
+                        android:textSize="18sp"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:scaleX="1.1"
+                        android:scaleY="1.1" />
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
