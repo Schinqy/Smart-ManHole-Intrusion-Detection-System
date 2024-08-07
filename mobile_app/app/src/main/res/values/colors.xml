@@ -9,7 +9,7 @@
         <color name="secondaryColor">#03DAC6</color>
 
         <!-- Background and Surface colors -->
-        <color name="backgroundColor">#FFFFFF</color>
+        <color name="backgroundColor">#000000</color>
         <color name="surfaceColor">#FFFFFF</color>
 
         <!-- Text colors -->

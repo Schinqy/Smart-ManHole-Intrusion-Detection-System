@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,76 +11,112 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/backgroundColor"
-        android:paddingTop="?attr/actionBarSize"
-        android:paddingBottom="16dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
+        android:background="@drawable/bg_gradient"
+
+
         android:fitsSystemWindows="true">
 
         <!-- Header -->
-        <TextView
-            android:id="@+id/header"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_collapseMode="pin"
+            tools:ignore="MissingConstraints">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:title="Manhole Monitor"
+                app:titleTextColor="@android:color/white" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Device Status Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/deviceStatusCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Manhole Monitor"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/primaryColor"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:padding="16dp" />
+            android:layout_margin="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true">
 
-        <!-- Device Status -->
-        <TextView
-            android:id="@+id/deviceStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Device Status: Online"
-            android:textSize="16sp"
-            android:textColor="@color/primaryColor"
-            app:layout_constraintTop_toBottomOf="@id/header"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
-            android:id="@+id/deviceId"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Device ID: 12345"
-            android:textSize="16sp"
-            android:textColor="@color/primaryColor"
-            app:layout_constraintTop_toBottomOf="@id/deviceStatus"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="16dp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
 
-        <!-- Control Switches -->
+                    >
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/deviceStatusIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_online"
+                        android:layout_marginEnd="8dp"
+                        android:contentDescription="Online status icon"/>
+
+                    <TextView
+                        android:id="@+id/deviceStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Device Status: Online"
+                        android:textSize="18sp"
+                        android:textColor="@color/primaryColor"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/deviceId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MH_HRE0001"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="8dp" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Control Card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/controlCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/deviceId"
+            app:layout_constraintTop_toBottomOf="@id/deviceStatusCard"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="16dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
             app:cardBackgroundColor="@color/cardBackgroundColor">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginBottom="16dp"
                     android:gravity="center_horizontal">
+
                     <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switchOverride"
                         android:layout_width="wrap_content"
@@ -97,6 +132,7 @@
                         android:scaleX="1.3"
                         android:scaleY="1.3" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -104,6 +140,7 @@
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="3dp"
                     android:gravity="center_vertical">
+
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
@@ -125,6 +162,7 @@
                         android:scaleX="1.1"
                         android:scaleY="1.1" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -210,34 +248,15 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Button to Show Graphs -->
-        <Button
-            android:id="@+id/btnShowGraphs"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Show Graphs"
-            android:textColor="@color/accentColor"
-            app:layout_constraintBottom_toTopOf="@id/btnToggleManholeList"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="16dp" />
 
-        <!-- Button to Open Sidebar -->
-        <Button
-            android:id="@+id/btnToggleManholeList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Show Manholes"
-            android:textColor="@color/accentColor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="16dp" />
+
 
         <!-- Intrusion Alert Card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/intrusionAlertCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/btnShowGraphs"
+            app:layout_constraintTop_toBottomOf="@id/statusCard"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="16dp"
@@ -260,6 +279,27 @@
                     android:textColor="@color/textColor" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+        <!-- Button to Show Graphs -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/intrusionAlertCard"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="end|bottom"
+            android:layout_margin="10dp"
+
+            >
+        <Button
+            android:id="@+id/btnShowGraphs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show Graphs"
+            android:textColor="@color/accentColor"
+
+            android:layout_margin="10dp" />
+        </RelativeLayout>
+        <!-- Button to Open Sidebar -->
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Sidebar Content -->
@@ -267,7 +307,8 @@
         android:id="@+id/navigationView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start">
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true">
 
         <LinearLayout
             android:layout_width="match_parent"
