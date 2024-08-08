@@ -33,7 +33,7 @@ void postData(int waterLevel, int reedStatus, int motionDetected) {
 
  
 // Construct the JSON payload 
- String payload = "{\"api_key\":\"" + api_key + "\",\"manhole_id\":\"" + String(ssid) + "\",\"water_level\":" + String(waterLevel) + ",\"reed_status\":" + String(reedStatus) + ",\"motion_detected\":" + String(motionDetected) + "}";
+ String payload = "{\"api_key\":\"" + api_key + "\",\"manhole_id\":\"" + String(manhole_id) + "\",\"water_level\":" + String(waterLevel) + ",\"reed_status\":" + String(reedStatus) + ",\"motion_detected\":" + String(motionDetected) + "}";
 
 
 // Use this payload for HTTP request

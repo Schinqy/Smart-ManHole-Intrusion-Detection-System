@@ -18,7 +18,8 @@
         <color name="textColorInverse">#FFFFFF</color>
 
         <!-- Card colors -->
-        <color name="cardBackgroundColor">#F5F5F5</color>
+   <color name="cardBackgroundColor">#F5F5F5</color>
+
         <color name="cardTextColor">#000000</color>
 
         <!-- Other colors -->

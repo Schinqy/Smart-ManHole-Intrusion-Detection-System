@@ -7,7 +7,7 @@
 // WiFi credentials
 const char* ssid = "Sch! Phone";
 const char* password = "passc0d10";
-
+const char* manhole_id = "MH_HRE0001";
 // API endpoints
 const char* postAPI = "http://lui.co.zw/smids/post.php";
 const char* ctrlAPI = "http://lui.co.zw/smids/ctrl.php?board=1";
