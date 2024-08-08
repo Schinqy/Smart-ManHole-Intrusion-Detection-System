@@ -16,7 +16,7 @@ require 'connection.php'; // Include the connection file
 
 // Prepare and execute SQL query to retrieve data
 
-$stmt = $conn->prepare("SELECT water_level, reed_status, motion_detected FROM sensorData WHERE manhole_id = ?");
+$stmt = $conn->prepare("SELECT * FROM sensorData WHERE manhole_id = ?");
 
 $stmt->bind_param("i", $manhole_id); // Bind the manhole_id as an integer
 

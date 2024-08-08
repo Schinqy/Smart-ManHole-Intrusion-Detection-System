@@ -21,35 +21,4 @@ public class ApiClient {
         return getRetrofitInstance().create(DataInterface.class);
     }
 
-    public static CalendarInterface getCalendarInterface() {
-        return getRetrofitInstance().create(CalendarInterface.class);
-    }
-
-    public static ResultsInterface getResultsInterface() {
-        return getRetrofitInstance().create(ResultsInterface.class);
-    }
-
-    public static TimetableInterface getTimetableInterface() {
-        return getRetrofitInstance().create(TimetableInterface.class);
-    }
-
-    public static AnnouncementInterface getAnnouncementsInterface() {
-        return getRetrofitInstance().create(AnnouncementInterface.class);
-    }
-
-    public static AttendanceInterface getAttendanceInterface() {
-        return getRetrofitInstance().create(AttendanceInterface.class);
-    }
-
-    public static FinancesInterface getFinancesInterface() {
-        return getRetrofitInstance().create(FinancesInterface.class);
-    }
-
-    public static BlobInterface getBlobInterface() {
-        return getRetrofitInstance().create(BlobInterface.class);
-    }
-
-    public static TokensInterface getTokensInterface() {
-        return getRetrofitInstance().create(TokensInterface.class);
-    }
 }
