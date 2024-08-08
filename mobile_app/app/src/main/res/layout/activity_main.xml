@@ -252,7 +252,7 @@
 
 
         <!-- Intrusion Alert Card -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/intrusionAlertCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -278,7 +278,7 @@
                     android:textSize="16sp"
                     android:textColor="@color/textColor" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
         <!-- Button to Show Graphs -->
         <RelativeLayout
             android:layout_width="match_parent"
