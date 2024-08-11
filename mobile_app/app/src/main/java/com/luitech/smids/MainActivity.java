@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -38,10 +39,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView motionDetectedTextView;
     private TextView deviceStatusTextView;
 
+    private AppCompatImageView deviceStatusIcon;
+
     private Handler handler;
     private Runnable updateTask;
     private DeviceStatusChecker statusChecker;
     private SwitchMaterial controlSwitch;
+
+
 
     private String board_id;
 
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         reedStatusTextView = findViewById(R.id.reedStatus);
         motionDetectedTextView = findViewById(R.id.motionStatus);
         deviceStatusTextView = findViewById(R.id.deviceStatus);
+        deviceStatusIcon = findViewById(R.id.deviceStatusIcon);
 
         statusChecker = new DeviceStatusChecker(); // Initialize statusChecker
 
@@ -176,8 +182,11 @@ public class MainActivity extends AppCompatActivity {
 
                                     if (isOnline) {
                                         deviceStatusTextView.setText("Device Online");
+                                        deviceStatusIcon.setImageResource(R.drawable.ic_online);
                                     } else {
                                         deviceStatusTextView.setText("Last Seen: " + timestamp);
+                                        deviceStatusIcon.setImageResource(R.drawable.ic_offline);
+
                                     }
                                 } else {
                                     waterLevelTextView.setText("No data found.");

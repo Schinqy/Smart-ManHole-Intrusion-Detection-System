@@ -3,6 +3,7 @@ void setupSensors() {
   pinMode(waterSensorPin, INPUT);
   pinMode(reedSensorPin, INPUT_PULLUP);
   pinMode(motionSensorPin, INPUT);
+  pinMode(ledIndicatorPin, OUTPUT);
 }
 
 void checkSensors() {
@@ -17,6 +18,6 @@ void checkSensors() {
   Serial.print("Reed Status: "); Serial.println(reedStatus ? "Detected" : "Not Detected");
   Serial.print("Motion Detected: "); Serial.println(motionDetected ? "Yes" : "No");
 
-  // Add logic to trigger relay or other actions based on sensor data
+  
 }
 

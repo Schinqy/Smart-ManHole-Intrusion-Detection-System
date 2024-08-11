@@ -26,11 +26,14 @@ const long interval = 5000;
 unsigned long previousMillis = 0;
 
 // Pin configuration
-const int relayPin = 48;
-const int buzzerPin = 6;
-const int waterSensorPin = 7; 
-const int reedSensorPin = 8;  
-const int motionSensorPin = 9; 
+const int relayPin = 13;
+const int buzzerPin = 15;
+const int waterSensorPin = 32; 
+const int reedSensorPin = 16;  
+const int motionSensorPin = 27; 
+const int ledIndicator = 14;
+const int echoPin = 6;
+const int triggerPin = 4;
 
 void setup() {
     Serial.begin(115200);
