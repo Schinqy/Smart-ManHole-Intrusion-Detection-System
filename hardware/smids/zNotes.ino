@@ -1,5 +1,5 @@
 //Add LED indicators
-//Add Buzzer
+//Add Buzzer ---Done--
 //Check for WiFi Connection Before API request
 //Handle offline scenarios
 //Notification API

@@ -33,4 +33,14 @@ public class ApiClient {
         return getRetrofitInstance().create(ControlInterface.class);
     }
 
+    public static GpioInterface getGpioInterface()
+    {
+        return getRetrofitInstance().create(GpioInterface.class);
+    }
+
+    public static GetStateInterface getStateInterface()
+    {
+        return getRetrofitInstance().create(GetStateInterface.class);
+    }
+
 }
