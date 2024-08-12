@@ -1,13 +1,26 @@
-package com.prota.tcflportalv1.network;
+package com.luitech.smids.network;
 
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Body;
 import retrofit2.http.POST;
+
 public interface TokensInterface {
-    @FormUrlEncoded
-    @POST("portal/storeTokens.php")
-    Call<Void> storeToken(@Field("token") String token);
+    @POST("smids/storeTokens.php")
+    Call<Void> storeToken(@Body TokenRequest tokenRequest);
+
+    class TokenRequest {
+        private String token;
+
+        public TokenRequest(String token) {
+            this.token = token;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+    }
 }
-
-

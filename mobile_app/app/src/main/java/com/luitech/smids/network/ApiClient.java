@@ -43,4 +43,7 @@ public class ApiClient {
         return getRetrofitInstance().create(GetStateInterface.class);
     }
 
+    public static TokensInterface getTokensInterface() {
+        return getRetrofitInstance().create(TokensInterface.class);
+    }
 }

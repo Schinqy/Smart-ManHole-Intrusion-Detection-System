@@ -21,6 +21,7 @@ import com.luitech.smids.network.ControlInterface;
 import com.luitech.smids.ControlRequest;
 import com.luitech.smids.network.GetStateInterface;
 import com.luitech.smids.network.GpioInterface;
+import com.luitech.smids.network.TokensInterface;
 import com.luitech.smids.utils.ConfigUtils;
 
 import org.json.JSONArray;
@@ -36,6 +37,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.google.firebase.messaging.FirebaseMessaging;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -71,6 +74,17 @@ public class MainActivity extends AppCompatActivity {
         deviceStatusIcon = findViewById(R.id.deviceStatusIcon);
 
         statusChecker = new DeviceStatusChecker(); // Initialize statusChecker
+        // Retrieve FCM token and send it to the server
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                Log.d("MainActivity", "Fetching FCM registration token failed", task.getException());
+                return;
+            }
+
+            String token = task.getResult();
+            Log.d("TOKEN", "HERE IS THE TOKEN:" + token);
+            sendTokenToServer(token);
+        });
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -91,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
         controlSwitch = findViewById(R.id.switchOverride); //override Switch
         teargasSwitch = findViewById(R.id.switchTearGas);
         alarmSwitch = findViewById(R.id.switchAlarm);
+
+
 
         controlSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -341,6 +357,37 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 showToast("Request failed: " + t.getMessage());
+            }
+        });
+    }
+
+
+    // Example usage
+    private void sendTokenToServer(String token) {
+        TokensInterface tokensInterface = ApiClient.getTokensInterface(); // Make sure this method returns an instance of TokensInterface
+        TokensInterface.TokenRequest tokenRequest = new TokensInterface.TokenRequest(token);
+
+        Call<Void> call = tokensInterface.storeToken(tokenRequest);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d("MainActivity", "Token stored successfully");
+                } else {
+                    try {
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
+                        Log.e("MainActivity", "Error storing token: " + errorBody);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.e("MainActivity", "Error reading error body.");
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("MainActivity", "Error: " + t.getMessage());
             }
         });
     }

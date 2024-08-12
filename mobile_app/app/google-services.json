@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "738674600334",
+    "project_id": "smids-b6777",
+    "storage_bucket": "smids-b6777.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:738674600334:android:ab2ed936f11909ebd49cdf",
+        "android_client_info": {
+          "package_name": "com.luitech.smids"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCP0j_IAsYTFQAKHSaKozQyoZK-yQ_0W3k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
