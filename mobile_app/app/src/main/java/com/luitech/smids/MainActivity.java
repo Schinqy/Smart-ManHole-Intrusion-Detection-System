@@ -1,8 +1,17 @@
 package com.luitech.smids;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -10,9 +19,12 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.luitech.smids.network.ApiClient;
@@ -21,6 +33,8 @@ import com.luitech.smids.network.ControlInterface;
 import com.luitech.smids.ControlRequest;
 import com.luitech.smids.network.GetStateInterface;
 import com.luitech.smids.network.GpioInterface;
+import com.luitech.smids.network.LocationInterface;
+import com.luitech.smids.network.NotificationsInterface;
 import com.luitech.smids.network.TokensInterface;
 import com.luitech.smids.utils.ConfigUtils;
 
@@ -30,7 +44,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import okhttp3.ResponseBody;
@@ -39,12 +55,15 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONObject;
+import com.luitech.smids.adapters.NotificationAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView waterLevelTextView;
     private TextView reedStatusTextView;
     private TextView motionDetectedTextView;
+
+    private TextView locationTextView;
     private TextView deviceStatusTextView;
 
     private AppCompatImageView deviceStatusIcon;
@@ -60,18 +79,56 @@ public class MainActivity extends AppCompatActivity {
     private SwitchMaterial alarmSwitch;
     private SwitchMaterial overrideSwitch;
     private boolean overrideState = false;
+    private RecyclerView recyclerView;
+    private NotificationAdapter adapter;
+
+    private CardView motionCard;
+    private CardView waterCard;
+    private CardView reedCard;
+
+    private String mh_id = "MH_HRE0001";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_3);
 
         waterLevelTextView = findViewById(R.id.waterLevelStatus);
         reedStatusTextView = findViewById(R.id.reedStatus);
         motionDetectedTextView = findViewById(R.id.motionStatus);
+        locationTextView = findViewById(R.id.location);
         deviceStatusTextView = findViewById(R.id.deviceStatus);
         deviceStatusIcon = findViewById(R.id.deviceStatusIcon);
+
+        motionCard = findViewById(R.id.motionCard);
+        waterCard = findViewById(R.id.waterCard);
+        reedCard = findViewById(R.id.reedCard);
+
+        motionCard.setOnClickListener(view -> {
+
+            Intent intent = new Intent (MainActivity.this, TableActivity.class );
+            intent.putExtra("table_type", "Motion");
+            intent.putExtra("manhole_id", mh_id);
+            startActivity(intent);
+
+        });
+
+        reedCard.setOnClickListener(view -> {
+            Intent intent = new Intent (MainActivity.this, TableActivity.class );
+            intent.putExtra("table_type", "Reed");
+            intent.putExtra("manhole_id", mh_id);
+            startActivity(intent);
+
+        });
+        waterCard.setOnClickListener(view -> {
+            Intent intent = new Intent (MainActivity.this, TableActivity.class );
+            intent.putExtra("table_type", "Water");
+            intent.putExtra("manhole_id", mh_id);
+            startActivity(intent);
+
+        });
+
 
         statusChecker = new DeviceStatusChecker(); // Initialize statusChecker
         // Retrieve FCM token and send it to the server
@@ -92,11 +149,29 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+
+            // Initialize RecyclerView and Adapter
+            recyclerView = findViewById(R.id.recyclerViewNotifications);
+
+
+        if (recyclerView != null) {
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                List<NotificationModel> notificationList = new ArrayList<>();
+                adapter = new NotificationAdapter(notificationList);
+                recyclerView.setAdapter(adapter);
+            } else {
+                Log.e("MainActivity", "RecyclerView is null. Check the ID in the XML layout.");
+            }
+
+            fetchNotifications(); // Load notifications from API
+
+
         handler = new Handler();
         updateTask = new Runnable() {
             @Override
             public void run() {
-                fetchData("MH_HRE0001"); // Replace with actual manhole_id
+                fetchData(mh_id);
+                fetchLocation("MH_HRE0001");
                 handler.postDelayed(this, 5000); // Update every 5 seconds
             }
         };
@@ -235,9 +310,44 @@ public class MainActivity extends AppCompatActivity {
                                     String motionDetected = latestData.optString("motion_detected");
                                     String timestamp = latestData.optString("timestamp");
 
-                                    waterLevelTextView.setText("Water Level: " + waterLevel);
-                                    reedStatusTextView.setText("Reed Status: " + reedStatus);
-                                    motionDetectedTextView.setText("Motion Detected: " + motionDetected);
+                                    if (waterLevel.equals("1"))
+                                    {
+                                        waterLevelTextView.setText("Level Full");
+                                    }
+                                    else if (waterLevel.equals("0"))
+                                    {
+                                        waterLevelTextView.setText("Level Fine");
+                                    }
+                                   else
+                                   {
+                                       waterLevelTextView.setText("Uknown");
+                                    }
+
+                                   if(reedStatus.equals("1"))
+                                   {
+                                       reedStatusTextView.setText("Opened");
+                                   }
+                                   else if(reedStatus.equals("0"))
+                                   {
+                                       reedStatusTextView.setText("Closed");
+                                   }
+                                   else
+                                   {
+                                       reedStatusTextView.setText("Uknown");
+                                   }
+
+                                       if(motionDetected.equals("1"))
+                                       {
+                                           motionDetectedTextView.setText("Detected");
+                                       }
+                                    else if(motionDetected.equals("0"))
+                                    {
+                                        motionDetectedTextView.setText("Not Detected");
+                                    }
+                                    else
+                                    {
+                                        motionDetectedTextView.setText("Uknown");
+                                    }
 
                                     boolean isOnline = statusChecker.isDeviceOnline(timestamp);
 
@@ -250,26 +360,26 @@ public class MainActivity extends AppCompatActivity {
 
                                     }
                                 } else {
-                                    waterLevelTextView.setText("No data found.");
+                                    locationTextView.setText("No data found.");
                                 }
                             } else {
-                                waterLevelTextView.setText("No data found.");
+                                locationTextView.setText("No data found.");
                             }
                         } else {
-                            waterLevelTextView.setText("Error: " + status);
+                            locationTextView.setText("Error: " + status);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        waterLevelTextView.setText("Failed to parse data.");
+                        locationTextView.setText("Failed to parse data.");
                     }
                 } else {
-                    waterLevelTextView.setText("Request failed.");
+                    locationTextView.setText("Request failed.");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                waterLevelTextView.setText("Failed to fetch data.");
+                locationTextView.setText("Failed to fetch data.");
             }
         });
     }
@@ -391,6 +501,99 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
+        private void fetchNotifications() {
+            NotificationsInterface notificationsInterface = ApiClient.getNotificationsInterface();
+            Call<List<NotificationModel>> call = notificationsInterface.getNotifications();
+
+            call.enqueue(new Callback<List<NotificationModel>>() {
+                @Override
+                public void onResponse(Call<List<NotificationModel>> call, Response<List<NotificationModel>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        List<NotificationModel> notifications = response.body();
+                        // Log the notifications to check the data
+                        for (NotificationModel notification : notifications) {
+                            Log.d("Notification", "Heading: " + notification.getBoardId() + ", Message: " + notification.getText() + ", Timestamp: " + notification.getTimestamp());
+                        }
+                        adapter = new NotificationAdapter(notifications);
+                        recyclerView.setAdapter(adapter);
+                    } else {
+                        Log.e("NotificationsActivity", "Error fetching notifications: " + response.message());
+                    }
+                }
+
+
+                @Override
+                public void onFailure(Call<List<NotificationModel>> call, Throwable t) {
+                    Log.e("NotificationsActivity", "Failure: " + t.getMessage());
+                }
+            });
+        }
+
+    private void fetchLocation(String manhole_id) {
+        LocationInterface locationInterface = ApiClient.getLocationInterface();
+        Call<ResponseBody> call = locationInterface.getLocation(manhole_id);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        // Read the response body
+                        String responseBody = response.body().string();
+                        Log.d("API Response", responseBody); // Log the response for debugging
+
+                        // Parse the JSON response
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        String loc = jsonObject.getString("location");
+
+                        // Split location string into latitude and longitude
+                        String[] coordinates = loc.split(",");
+                        if (coordinates.length == 2) {
+                            String latitude = coordinates[0].trim();
+                            String longitude = coordinates[1].trim();
+                            String mapsUrl = "https://www.google.com/maps?q=" + latitude + "," + longitude;
+
+                            // Set the text and make it clickable
+                            SpannableString spannableString = new SpannableString("Location: (" + loc + ")");
+                            ClickableSpan clickableSpan = new ClickableSpan() {
+                                @Override
+                                public void onClick(View widget) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mapsUrl));
+                                    startActivity(intent);
+                                }
+                            };
+                            // Set the color for the clickable span
+                            spannableString.setSpan(new ForegroundColorSpan(Color.BLACK), 0, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            spannableString.setSpan(clickableSpan, "Location: ".length(), spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+
+                            locationTextView.setText(spannableString);
+
+                            locationTextView.setMovementMethod(LinkMovementMethod.getInstance());
+
+                        } else {
+                            showToast("Invalid location format.");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        showToast("Failed to parse data.");
+                    }
+                } else {
+                    showToast("Failed to fetch data.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                showToast("Request failed: " + t.getMessage());
+            }
+        });
+    }
+
+
 
 
 

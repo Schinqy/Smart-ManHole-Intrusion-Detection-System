@@ -2,41 +2,27 @@ package com.luitech.smids;
 
 
 public class NotificationModel {
-    private int id;
-    private String text;
+    private String board_id; // Corresponds to 'board_id'
+    private String text; // Corresponds to 'message'
     private String timestamp;
-    private String board_id;
 
-    // Getters and Setters
-    public int getId() {
-        return id;
+    // Constructor
+    public NotificationModel(String board_id, String text, String timestamp) {
+        this.board_id = board_id;
+        this.text = text;
+        this.timestamp = timestamp;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    // Getters
+    public String getBoardId() {
+        return board_id;
     }
 
     public String getText() {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
     public String getTimestamp() {
         return timestamp;
-    }
-
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getBoard_id() {
-        return board_id;
-    }
-
-    public void setBoard_id(String board_id) {
-        this.board_id = board_id;
     }
 }

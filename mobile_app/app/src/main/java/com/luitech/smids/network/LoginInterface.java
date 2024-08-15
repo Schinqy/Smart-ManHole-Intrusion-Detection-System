@@ -6,7 +6,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
 
-public interface ApiInterface {
+public interface LoginInterface {
     @FormUrlEncoded
     @POST("portal/login.php") // Specify your PHP script name
     Call<ResponseBody> loginUser(
