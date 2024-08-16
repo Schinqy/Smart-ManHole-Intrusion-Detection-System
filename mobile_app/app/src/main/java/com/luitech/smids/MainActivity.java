@@ -12,6 +12,7 @@ import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,10 +24,12 @@ import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.luitech.smids.adapters.ManholeAdapter;
 import com.luitech.smids.network.ApiClient;
 import com.luitech.smids.network.DataInterface;
 import com.luitech.smids.network.ControlInterface;
@@ -34,6 +37,7 @@ import com.luitech.smids.ControlRequest;
 import com.luitech.smids.network.GetStateInterface;
 import com.luitech.smids.network.GpioInterface;
 import com.luitech.smids.network.LocationInterface;
+import com.luitech.smids.network.ManholeInterface;
 import com.luitech.smids.network.NotificationsInterface;
 import com.luitech.smids.network.TokensInterface;
 import com.luitech.smids.utils.ConfigUtils;
@@ -57,7 +61,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONObject;
 import com.luitech.smids.adapters.NotificationAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ManholeAdapter.OnManholeClickListener {
 
     private TextView waterLevelTextView;
     private TextView reedStatusTextView;
@@ -81,12 +85,20 @@ public class MainActivity extends AppCompatActivity {
     private boolean overrideState = false;
     private RecyclerView recyclerView;
     private NotificationAdapter adapter;
+    private Button sideBarButton;
+    private DrawerLayout drawerLayout;
+
 
     private CardView motionCard;
     private CardView waterCard;
     private CardView reedCard;
 
+private TextView deviceId;
     private String mh_id = "MH_HRE0001";
+
+
+    private ManholeAdapter manholeAdapter;
+    private List<Manhole> manholes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +112,17 @@ public class MainActivity extends AppCompatActivity {
         locationTextView = findViewById(R.id.location);
         deviceStatusTextView = findViewById(R.id.deviceStatus);
         deviceStatusIcon = findViewById(R.id.deviceStatusIcon);
+        deviceId = findViewById(R.id.deviceId);
+
+        sideBarButton = findViewById(R.id.btnShowGraphs);
+        drawerLayout = findViewById(R.id.main);
+
+
+
+        recyclerView = findViewById(R.id.recyclerViewManholes);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        manholeAdapter = new ManholeAdapter(manholes, (ManholeAdapter.OnManholeClickListener) this);
+        recyclerView.setAdapter(manholeAdapter);
 
         motionCard = findViewById(R.id.motionCard);
         waterCard = findViewById(R.id.waterCard);
@@ -129,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-
+        fetchManholes();
         statusChecker = new DeviceStatusChecker(); // Initialize statusChecker
         // Retrieve FCM token and send it to the server
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
@@ -171,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 fetchData(mh_id);
-                fetchLocation("MH_HRE0001");
+                fetchLocation(mh_id);
                 handler.postDelayed(this, 5000); // Update every 5 seconds
             }
         };
@@ -187,11 +210,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 int state = isChecked ? 1 : 0;
-                board_id = "MH_HRE0001"; //
-                sendControlRequest(board_id, state);
+
+                sendControlRequest(mh_id, state);
                 overrideState = isChecked;
                 if (isChecked) {
-                    updateInitialSwitchStates(board_id); // Fetch and update switch states
+                    updateInitialSwitchStates(mh_id); // Fetch and update switch states
                 }
                 updateSwitchState();
 
@@ -202,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
 
         teargasSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (overrideState) {
-                updateGpioState("MH_HRE0001", "relay", isChecked ? 1 : 0);
+                updateGpioState(mh_id, "relay", isChecked ? 1 : 0);
             }
             else
             {
@@ -215,13 +238,19 @@ public class MainActivity extends AppCompatActivity {
         alarmSwitch.setOnCheckedChangeListener((buttonView, isChecked2) -> {
             if (overrideState)
             {
-                updateGpioState("MH_HRE0001", "alarm", isChecked2 ? 1 : 0);
+                updateGpioState(mh_id, "alarm", isChecked2 ? 1 : 0);
             } else {
                 alarmSwitch.setChecked(false); // Reset switch if override is off
                 showToast("Override switch is off.");
             }
         });
-       updateSwitchState(); // Initialize switch states
+
+        sideBarButton.setOnClickListener(view ->
+                drawerLayout.openDrawer(findViewById(R.id.navigationView)));
+
+
+
+                updateSwitchState(); // Initialize switch states
     }
 
     private void updateSwitchState() {
@@ -320,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                    else
                                    {
-                                       waterLevelTextView.setText("Uknown");
+                                       waterLevelTextView.setText("Unknown");
                                     }
 
                                    if(reedStatus.equals("1"))
@@ -333,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
                                    }
                                    else
                                    {
-                                       reedStatusTextView.setText("Uknown");
+                                       reedStatusTextView.setText("Unknown");
                                    }
 
                                        if(motionDetected.equals("1"))
@@ -346,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     else
                                     {
-                                        motionDetectedTextView.setText("Uknown");
+                                        motionDetectedTextView.setText("Unknown");
                                     }
 
                                     boolean isOnline = statusChecker.isDeviceOnline(timestamp);
@@ -593,9 +622,65 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onManholeClick(Manhole manhole) {
+        // Handle manhole click here
+        Toast.makeText(this, "Selected: " + manhole.getName(), Toast.LENGTH_SHORT).show();
+        mh_id = manhole.getName();
+        deviceId.setText(mh_id);
+        fetchData(mh_id);
+        fetchLocation(mh_id);
 
+                drawerLayout.closeDrawer(findViewById(R.id.navigationView));
 
+    }
 
+    private void fetchManholes() {
+        ManholeInterface manholeInterface = ApiClient.getManholeInterface();
+        Call<ResponseBody> call = manholeInterface.getManhole();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        String responseBody = response.body().string();
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        String status = jsonObject.optString("status");
+
+                        if ("success".equals(status)) {
+                            JSONArray boardsArray = jsonObject.optJSONArray("boards");
+                            List<Manhole> manholes = new ArrayList<>();
+
+                            if (boardsArray != null) {
+                                for (int i = 0; i < boardsArray.length(); i++) {
+                                    JSONObject boardObject = boardsArray.getJSONObject(i);
+                                    String id = boardObject.optString("id");
+                                    String boardName = boardObject.optString("board");
+                                    Manhole manhole = new Manhole(id, boardName);
+                                    manholes.add(manhole);
+                                }
+                            }
+
+                            // Update the RecyclerView with the new data
+                            manholeAdapter.updateManholes(manholes);
+                        } else {
+                            Toast.makeText(MainActivity.this, "Error: " + status, Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(MainActivity.this, "Failed to parse data", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "Request failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Failed to fetch data", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 }
 

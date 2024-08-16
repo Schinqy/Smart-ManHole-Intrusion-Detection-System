@@ -10,7 +10,7 @@ const char* password = "passc0d10";
 const char* manhole_id = "MH_HRE0001";
 // API endpoints
 const char* postAPI = "http://lui.co.zw/smids/post.php";
-const char* ctrlAPI = "http://lui.co.zw/smids/ctrl.php?board=1";
+const char* ctrlAPI = "http://lui.co.zw/smids/ctrl.php?board=MH_HRE0001";
 const char* notifyAPI = "http://lui.co.zw/smids/notify.php";
 const char* auto_hwAPI = "http://lui.co.zw/smids/auto_hw.php";
 
@@ -21,8 +21,8 @@ int motionDetected;
 
 // Timing variables
 unsigned long lastTime = 0;
-unsigned long timerDelay = 5000;
-const long interval = 5000;
+unsigned long timerDelay = 10000;
+const long interval = 10000;
 unsigned long previousMillis = 0;
 
 // Pin configuration
@@ -49,14 +49,16 @@ void loop() {
 
     if (currentMillis - previousMillis >= interval) {
         if (httpAutoStatus() == "0") {
+          Serial.println("AUTO MODE DISABLED");
             appCtrl();
          
         } else if (httpAutoStatus() == "1") {
+          Serial.println("AUTO MODE ENABLED");
             autoCtrl();
         } else {
             // OFFLINE DO SOMETHING
-            Serial.println(F("OFFLINE"));
-            // autoCtrl();
+            Serial.println(F("OFFLINE: AUTO MODE ON"));
+            autoCtrl();
         }
 
         // Send sensor data

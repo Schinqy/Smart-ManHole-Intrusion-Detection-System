@@ -46,4 +46,14 @@ public class ApiClient {
     public static TokensInterface getTokensInterface() {
         return getRetrofitInstance().create(TokensInterface.class);
     }
+
+    public static NotificationsInterface getNotificationsInterface() {
+        return getRetrofitInstance().create(NotificationsInterface.class);
+    }
+    public static LocationInterface getLocationInterface() {
+        return getRetrofitInstance().create(LocationInterface.class);
+    }
+    public static ManholeInterface getManholeInterface() {
+        return getRetrofitInstance().create(ManholeInterface.class);
+    }
 }

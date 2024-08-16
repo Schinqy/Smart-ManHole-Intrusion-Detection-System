@@ -253,6 +253,8 @@
 
 
         <!-- Intrusion Alert Card -->
+        <!-- Intrusion Alert Card -->
+        <!-- Intrusion Alert Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/intrusionAlertCard"
             android:layout_width="0dp"
@@ -275,11 +277,21 @@
                     android:id="@+id/intrusionAlert"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Intrusion Alert: No Alerts"
+                    android:text="Intrusion Alerts"
                     android:textSize="16sp"
-                    android:textColor="@color/textColor" />
+                    android:textColor="@color/textColor"
+                    android:textStyle="bold" />
+
+                <!-- RecyclerView for Notifications inside the card -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewNotifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
         <!-- Button to Show Graphs -->
         <RelativeLayout
             android:layout_width="match_parent"

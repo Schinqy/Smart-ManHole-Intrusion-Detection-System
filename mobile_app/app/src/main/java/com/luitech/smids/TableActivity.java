@@ -3,40 +3,57 @@ package com.luitech.smids;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.util.TypedValue;
+import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.luitech.smids.adapters.ManholeAdapter;
 import com.luitech.smids.network.ApiClient;
 import com.luitech.smids.network.DataInterface;
+import com.luitech.smids.network.ManholeInterface;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import java.util.Locale;
 
-public class TableActivity extends AppCompatActivity {
+public class TableActivity extends AppCompatActivity implements ManholeAdapter.OnManholeClickListener {
     private TableLayout tableLayout;
     private Handler handler;
     private Runnable updateTask;
+    private RecyclerView recyclerView;
+    private ManholeAdapter manholeAdapter;
+    private List<Manhole> manholes = new ArrayList<>();
+    private TextView deviceStatusTextView;
+    private String mh_id;
+    private String tableType;
+    private AppCompatImageView deviceStatusIcon;
+    private DeviceStatusChecker statusChecker;
+
+    private TextView deviceIdTextView;
+
+    private Button sideBarButton;
+    private DrawerLayout drawerLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,35 +61,61 @@ public class TableActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_table);
         tableLayout = findViewById(R.id.tableLayout);
+        deviceStatusTextView = findViewById(R.id.deviceStatus);
 
+       deviceStatusIcon = findViewById(R.id.deviceStatusIcon);
+       deviceIdTextView = findViewById(R.id.deviceId);
+        statusChecker = new DeviceStatusChecker();
+
+
+        sideBarButton = findViewById(R.id.btnShowGraphs);
+        drawerLayout = findViewById(R.id.main);
         Intent intent = getIntent();
-        String manholeId = intent.getStringExtra("manhole_id");
-        String table_type = intent.getStringExtra("table_type");
-        TextView table_heading = findViewById(R.id.tableHeading);
+        mh_id = intent.getStringExtra("manhole_id");
+        tableType = intent.getStringExtra("table_type");
+        TextView tableHeading = findViewById(R.id.tableHeading);
+        recyclerView = findViewById(R.id.recyclerViewManholes);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        manholeAdapter = new ManholeAdapter(manholes, this);
+        recyclerView.setAdapter(manholeAdapter);
+
+        fetchManholes();
         handler = new Handler();
         updateTask = new Runnable() {
             @Override
             public void run() {
-                fetchData(manholeId, table_type);
+                fetchData(mh_id, tableType);
 
                 handler.postDelayed(this, 5000); // Update every 5 seconds
             }
         };
         handler.post(updateTask);
 
-        if(table_type.equals("Motion")){
+        switch (tableType) {
+            case "Motion":
+                tableHeading.setText("Motion Detection Table");
+                break;
+            case "Water":
+                tableHeading.setText("Water Table");
+                break;
+            default:
+                tableHeading.setText("Manhole Cover Table");
+                break;
+        }
+        sideBarButton.setOnClickListener(view ->
+                drawerLayout.openDrawer(findViewById(R.id.navigationView)));
+    }
 
-       table_heading.setText("Motion Detection Table");
-        }
-        else if(table_type.equals("Water"))
-        {
-            table_heading.setText("Water Table");
-        }
-        else
-        {
-            table_heading.setText("Manhole Cover Table");
-        }
-        }
+    @Override
+    public void onManholeClick(Manhole manhole) {
+        // Handle manhole click here
+        Toast.makeText(this, "Selected: " + manhole.getName(), Toast.LENGTH_SHORT).show();
+       mh_id = manhole.getName();
+       deviceIdTextView.setText(mh_id);
+       fetchData(mh_id, tableType);
+        drawerLayout.closeDrawer(findViewById(R.id.navigationView));
+
+    }
 
     private void fetchData(String manholeId, String dataType) {
         DataInterface dataInterface = ApiClient.getDataInterface();
@@ -91,10 +134,23 @@ public class TableActivity extends AppCompatActivity {
                             TableLayout tableLayout = findViewById(R.id.tableLayout);
 
                             if (dataArray != null && dataArray.length() > 0) {
-                                // Clear existing rows except the header
                                 tableLayout.removeViews(1, tableLayout.getChildCount() - 1);
+                                JSONObject dataLatest = dataArray.getJSONObject((dataArray.length() - 1));
+                                String timestampLatest = dataLatest.optString("timestamp");
+                                Log.d("Latest Date", timestampLatest);
+                                int dataLength = dataArray.length() - 1;
+                                boolean isOnline = statusChecker.isDeviceOnline(timestampLatest);
 
-                                for (int i = 0; i < dataArray.length(); i++) {
+                                if (isOnline) {
+                                    deviceStatusTextView.setText("Device Online");
+                                    deviceStatusIcon.setImageResource(R.drawable.ic_online);
+                                } else {
+                                    deviceStatusTextView.setText("Last Seen: " + timestampLatest);
+                                    deviceStatusIcon.setImageResource(R.drawable.ic_offline);
+
+                                }
+
+                                for (int i = dataLength; i >= 0; i--) {
                                     JSONObject data = dataArray.getJSONObject(i);
                                     String timestampStr = data.optString("timestamp");
 
@@ -158,7 +214,6 @@ public class TableActivity extends AppCompatActivity {
         row.addView(timestampView);
         row.addView(statusView);
 
-        // Add alternating background colors for better readability
         if (tableLayout.getChildCount() % 2 == 0) {
             row.setBackgroundColor(ContextCompat.getColor(this, R.color.row_even));
         } else {
@@ -168,6 +223,50 @@ public class TableActivity extends AppCompatActivity {
         tableLayout.addView(row);
     }
 
+    private void fetchManholes() {
+        ManholeInterface manholeInterface = ApiClient.getManholeInterface();
+        Call<ResponseBody> call = manholeInterface.getManhole();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        String responseBody = response.body().string();
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        String status = jsonObject.optString("status");
 
+                        if ("success".equals(status)) {
+                            JSONArray boardsArray = jsonObject.optJSONArray("boards");
+                            List<Manhole> manholes = new ArrayList<>();
 
+                            if (boardsArray != null) {
+                                for (int i = 0; i < boardsArray.length(); i++) {
+                                    JSONObject boardObject = boardsArray.getJSONObject(i);
+                                    String id = boardObject.optString("id");
+                                    String boardName = boardObject.optString("board");
+                                    Manhole manhole = new Manhole(id, boardName);
+                                    manholes.add(manhole);
+                                }
+                            }
+
+                            // Update the RecyclerView with the new data
+                            manholeAdapter.updateManholes(manholes);
+                        } else {
+                            Toast.makeText(TableActivity.this, "Error: " + status, Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(TableActivity.this, "Failed to parse data", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(TableActivity.this, "Request failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(TableActivity.this, "Failed to fetch data", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }
