@@ -8,6 +8,7 @@ void setupSensors() {
 
 void checkSensors() {
   int waterLevelAnalog = analogRead(waterSensorPin);
+  Serial.println("Water: " + String(waterLevelAnalog));
   if(waterLevelAnalog >= 400) waterLevel = 1;
   else waterLevel = 0;
   reedStatus = digitalRead(reedSensorPin); 
@@ -16,8 +17,6 @@ void checkSensors() {
 
   Serial.print("Water Level: "); Serial.println(waterLevel);
   Serial.print("Reed Status: "); Serial.println(reedStatus ? "Detected" : "Not Detected");
-  Serial.print("Motion Detected: "); Serial.println(motionDetected ? "Yes" : "No");
-
-  
+  Serial.print("Motion Detected: "); Serial.println(motionDetected ? "Yes" : "No");  
 }
 

@@ -8,6 +8,6 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface ControlInterface {
-    @POST("smids/ctrl_app.php")
-    Call<ResponseBody> updateGpioState(@Body ControlRequest request);
+    @POST("smids/ctrl_app.php") // Update to the correct PHP script name
+    Call<ResponseBody> updateAutonomy(@Body ControlRequest request);
 }

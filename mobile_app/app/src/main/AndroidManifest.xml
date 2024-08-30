@@ -18,6 +18,9 @@
         android:theme="@style/Theme.Smids"
         tools:targetApi="31">
         <activity
+            android:name=".AlertsActivity"
+            android:exported="false" />
+        <activity
             android:name=".TableActivity"
             android:exported="false" />
         <activity

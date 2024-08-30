@@ -10,6 +10,7 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.luitech.smids.adapters.ManholeAdapter;
 import com.luitech.smids.network.ApiClient;
@@ -93,6 +95,10 @@ public class MainActivity extends AppCompatActivity implements ManholeAdapter.On
     private CardView waterCard;
     private CardView reedCard;
 
+    private CardView intrusionAlertCard;
+    private MaterialButton btnShowAlerts;
+    private MaterialButton btnShowGraphs;
+
 private TextView deviceId;
     private String mh_id = "MH_HRE0001";
 
@@ -127,6 +133,17 @@ private TextView deviceId;
         motionCard = findViewById(R.id.motionCard);
         waterCard = findViewById(R.id.waterCard);
         reedCard = findViewById(R.id.reedCard);
+
+        intrusionAlertCard = findViewById(R.id.intrusionAlertCard);
+        btnShowAlerts = findViewById(R.id.btnShowAlerts);
+        adjustVisibilityBasedOnScreenSize();
+
+        btnShowAlerts.setOnClickListener(view -> {
+
+            Intent intent = new Intent (MainActivity.this, AlertsActivity.class );
+            startActivity(intent);
+
+        });
 
         motionCard.setOnClickListener(view -> {
 
@@ -195,6 +212,7 @@ private TextView deviceId;
             public void run() {
                 fetchData(mh_id);
                 fetchLocation(mh_id);
+                fetchNotifications();
                 handler.postDelayed(this, 5000); // Update every 5 seconds
             }
         };
@@ -258,10 +276,10 @@ private TextView deviceId;
         alarmSwitch.setEnabled(overrideState);
     }
 
-    private void sendControlRequest(String boardId, int state) {
+    private void sendControlRequest(String boardId, int autonomy) {
         ControlInterface controlInterface = ApiClient.getControlInterface();
-        ControlRequest request = new ControlRequest(boardId, state);
-        Call<ResponseBody> call = controlInterface.updateGpioState(request);
+        ControlRequest request = new ControlRequest(boardId, autonomy);
+        Call<ResponseBody> call = controlInterface.updateAutonomy(request);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -269,7 +287,7 @@ private TextView deviceId;
                 if (response.isSuccessful() && response.body() != null) {
                     try {
                         String responseBody = response.body().string();
-                        Toast.makeText(MainActivity.this, responseBody, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Success: " + responseBody, Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                         Toast.makeText(MainActivity.this, "Failed to read response.", Toast.LENGTH_SHORT).show();
@@ -285,7 +303,6 @@ private TextView deviceId;
             }
         });
     }
-
 
 
 
@@ -682,6 +699,25 @@ private TextView deviceId;
         });
     }
 
+    private void adjustVisibilityBasedOnScreenSize() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int screenHeight = displayMetrics.heightPixels;
+        Log.d("SCREEN_HEIGHT", "Screen height is: " + screenHeight);
+
+        // Define your threshold for small screen height
+        int smallScreenHeightThreshold = 2201;
+
+        if (screenHeight <= smallScreenHeightThreshold) {
+            // Small screen: Hide the card and show the button
+            intrusionAlertCard.setVisibility(View.GONE);
+            btnShowAlerts.setVisibility(View.VISIBLE);
+        } else {
+            // Large screen: Show the card and hide the button
+            intrusionAlertCard.setVisibility(View.VISIBLE);
+            btnShowAlerts.setVisibility(View.GONE);
+        }
+    }
 }
 
 

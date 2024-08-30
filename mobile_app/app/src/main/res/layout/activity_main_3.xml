@@ -469,10 +469,27 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Button to Show Graphs -->
+            <!-- Button to Show Alerts -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnShowAlerts"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Alerts"
+                android:visibility="gone"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/black"
+                android:padding="12dp"
+                android:layout_margin="16dp"
+                app:cornerRadius="24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnShowGraphs"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <!-- Button to Show Manholes-->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnShowGraphs"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Manhole List"
                 android:textColor="@color/white"
@@ -481,9 +498,11 @@
                 android:layout_margin="16dp"
                 app:cornerRadius="24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btnShowAlerts"
                 app:layout_constraintEnd_toEndOf="parent"
                 style="@style/Widget.MaterialComponents.Button" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

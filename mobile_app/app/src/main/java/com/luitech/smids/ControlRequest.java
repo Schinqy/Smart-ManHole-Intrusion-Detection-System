@@ -1,31 +1,27 @@
 package com.luitech.smids;
+
 public class ControlRequest {
     private String board;
-    private int state;
+    private int autonomy;
 
-    // Constructor
-    public ControlRequest(String board, int state) {
+    public ControlRequest(String board, int autonomy) {
         this.board = board;
-        this.state = state;
+        this.autonomy = autonomy;
     }
 
-    // Getter for board
     public String getBoard() {
         return board;
     }
 
-    // Setter for board
     public void setBoard(String board) {
         this.board = board;
     }
 
-    // Getter for state
-    public int getState() {
-        return state;
+    public int getAutonomy() {
+        return autonomy;
     }
 
-    // Setter for state
-    public void setState(int state) {
-        this.state = state;
+    public void setAutonomy(int autonomy) {
+        this.autonomy = autonomy;
     }
 }

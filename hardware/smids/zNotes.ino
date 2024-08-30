@@ -1,7 +1,6 @@
 //Add LED indicators
 //Add Buzzer ---Done--
-//Check for WiFi Connection Before API request
+//Check for WiFi Connection Before API request ---Done---
 //Handle offline scenarios
-//Notification API
-//Replace RGB with LEDs
-//No repeat notifier for same alert
+//Notification API ---Done---
+//No repeat notifier for same alert ---Done---

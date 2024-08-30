@@ -9,7 +9,10 @@ void autoCtrl()
     digitalWrite(relayPin, LOW);
    }
    else {
-    digitalWrite(buzzerPin, LOW);
+    if(!waterLevel)
+    {
+      digitalWrite(buzzerPin, LOW);
+    } 
     digitalWrite(relayPin, HIGH);
    }
 }

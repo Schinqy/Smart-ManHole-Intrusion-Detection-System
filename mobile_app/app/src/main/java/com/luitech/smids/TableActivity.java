@@ -109,7 +109,7 @@ public class TableActivity extends AppCompatActivity implements ManholeAdapter.O
     @Override
     public void onManholeClick(Manhole manhole) {
         // Handle manhole click here
-        Toast.makeText(this, "Selected: " + manhole.getName(), Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "Selected: " + manhole.getName(), Toast.LENGTH_SHORT).show();
        mh_id = manhole.getName();
        deviceIdTextView.setText(mh_id);
        fetchData(mh_id, tableType);
